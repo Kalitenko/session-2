@@ -24,8 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-/**
- */
 public class OutputFormatter {
     private PrintStream out;
 
@@ -40,9 +38,7 @@ public class OutputFormatter {
     private DecimalFormatSymbols dfs = new DecimalFormatSymbols();
 
 
-
     public void output(String[] names, Object[][] data) {
-        //TODO: implement me.
 
         // изменение группового разделителя для чисел
         dfs.setGroupingSeparator(' ');
@@ -50,21 +46,17 @@ public class OutputFormatter {
         numberFormat.setDecimalFormatSymbols(dfs);
         numberFormat.setGroupingUsed(true);
 
-//        // количество столбцов
-//        int numberOfColumns = names.length;
-//        // количество строк
-//        int numberOfRow = data.length;
-
         // ширина столбцов
         int widths[] = widthsOfColumns(names, data);
 
         this.out.print(topOfTable(names, widths));
         this.out.print(table(widths, data));
+
+        // вывод того, что получилось в итоге
         System.out.print(topOfTable(names, widths));
         System.out.print(table(widths, data));
 
     }
-
 
     // возможные типы данных
     enum typesOfData {
@@ -135,9 +127,6 @@ public class OutputFormatter {
                 }
             }
         }
-//        //HACK:
-//        for(int i = 0; i < numOfColumns; i++)
-//            System.out.println("result[" + i + "] = " + result[i]);
         return result;
     }
 
@@ -182,7 +171,7 @@ public class OutputFormatter {
         sb.append(delimiter());
 
         for(int i = 0; i < numOfColumns; i++)
-            sb.append(line(width[i]) + delimiter());
+            sb.append(line(width[i])).append(delimiter());
 
         sb.append(lineBreak());
 
@@ -237,6 +226,7 @@ public class OutputFormatter {
         return sb.toString();
     }
 
+    // строка данных
     private String[] raws(int[] width, Object[][] data){
 
         int dataLength = data.length;
@@ -248,13 +238,10 @@ public class OutputFormatter {
             typesOfData[] tod = new typesOfData[data[0].length];
             for (int i = 0; i < data[0].length; i++)
                 tod[i] = getDataType(data[0][i]);
-//            //HACK:
-//            System.out.println(tod);
 
             for (int i = 0; i < dataLength; i++) {
                 for (int j = 0; j < data[i].length; j++) {
                     sb.append(verticalLine()).append(cells(width[j], data[i][j], tod[j]));
-                    //sb.append(verticalLine()).append(cell(width[j] ,data[i][j]));
                 }
                 sb.append(verticalLine()).append(lineBreak()).append(horizontalLine(data[i].length, width));
                 result[i] = sb.toString();
@@ -264,25 +251,11 @@ public class OutputFormatter {
         return result;
     }
 
-    private String cell(int width, Object obj){
-
-        StringBuilder sb = new StringBuilder();
-        typesOfData tod = getDataType(obj);
-        String data = formatData(obj).toString();
-        int len = data.length();
-
-        if(tod == typesOfData.STRING)
-            sb.append(data).append(repeatString(" ", width - len));
-        else
-            sb.append(repeatString(" ", width - len)).append(data);
-
-        return sb.toString();
-    }
-
+    // ячейка данных
     private String cells(int width, Object obj, typesOfData tod){
 
         StringBuilder sb = new StringBuilder();
-        String data = formatData(obj).toString();
+        String data = formatData(obj);
         int len = data.length();
 
         if(tod == typesOfData.STRING)
@@ -293,21 +266,6 @@ public class OutputFormatter {
         return sb.toString();
     }
 
-//    private void cell(int width, Object obj){
-//
-//        StringBuilder sb = new StringBuilder();
-//        typesOfData tod = getDataType(obj);
-//        String int2Str = Integer.toString(width);
-//
-//        if(tod == typesOfData.STRING)
-//            sb.append("%-").append(int2Str).append("s|");
-//        else
-//            sb.append("%").append(int2Str).append("s|");
-//
-//        String alignFormat = sb.toString();
-//
-//        out.format(alignFormat,formatData(obj));
-//    }
 }
 
 
